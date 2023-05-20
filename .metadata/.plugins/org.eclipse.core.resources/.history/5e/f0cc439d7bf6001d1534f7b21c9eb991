@@ -1,0 +1,64 @@
+package com.example.demo.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.demo.entity.Shows;
+import com.example.demo.repository.ShowsRepo;
+
+//shows data on browser
+@RestController
+public class ShowsCtrl {
+	@Autowired
+	ShowsRepo showsRepo;
+	@GetMapping("/shows")
+	public List<Shows> getAllShows(){
+		return showsRepo.findAll();
+				
+	}
+	@GetMapping("/shows/{id}")
+	public Shows getShowsByid(@PathVariable("id")int id) {
+		return showsRepo.findById(id).get();
+	}
+	@PostMapping("/shows")
+	public String addShows(@RequestBody Shows shows)
+	{
+		showsRepo.save(shows);
+		return "Object is saved!";
+	}
+	
+	@PutMapping("/bookings/{id}")
+	public String updateShows(@RequestBody Shows shows) {
+		Shows shows1 = (Shows)showsRepo.findById(shows.getShow_id()).get();
+				if(shows1.getShow_id()==shows.getShow_id()) {
+					shows1.setShow_id(shows.getShow_id());
+					shows1.setTheatre_id(shows.getTheatre_id());
+					shows1.setMovie_id(shows.getMovie_id());
+					shows1.setShow_date(shows.getShow_date());
+					shows1.setShow_time(shows.getShow_time());
+					shows1.setAvailable_seats(shows.getAvailable_seats());
+					showsRepo.save(shows1);
+					
+
+}
+				return "record updated";
+	}
+				@DeleteMapping("/shows/{id}")
+				public String deleteshowssById(@PathVariable("id")int id) {
+					Shows shows1 = showsRepo.findById(id).get();
+					if(shows1.getShow_id()==id) {
+						showsRepo.delete(shows1);
+						
+					}
+					return "Record Deleted!";
+				}
+}
+				
